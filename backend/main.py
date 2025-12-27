@@ -6,8 +6,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
-from backend.database.config import engine, Base
-from backend.routes import documents, blocks, ai
+from database.config import engine, Base
+from routes import documents, blocks, ai
 
 
 @asynccontextmanager
@@ -76,7 +76,7 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(
-        "backend.main:app",
+        "main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

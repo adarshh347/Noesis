@@ -6,7 +6,7 @@ from typing import Optional, List, Dict, Any
 from datetime import datetime
 from uuid import UUID
 
-from backend.models.models import BlockType, TransformIntent
+from models.models import BlockType, TransformIntent
 
 
 # ============================================================================

@@ -8,7 +8,7 @@ from datetime import datetime
 import uuid
 import enum
 
-from backend.database.config import Base
+from database.config import Base
 
 
 class BlockType(str, enum.Enum):

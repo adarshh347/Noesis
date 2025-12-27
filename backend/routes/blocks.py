@@ -7,9 +7,9 @@ from sqlalchemy import select, func
 from typing import List
 from uuid import UUID
 
-from backend.database.config import get_db
-from backend.models.models import Block, BlockVersion, Document
-from backend.models.schemas import (
+from database.config import get_db
+from models.models import Block, BlockVersion, Document
+from models.schemas import (
     BlockCreate,
     BlockUpdate,
     BlockResponse,

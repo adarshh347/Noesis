@@ -8,16 +8,16 @@ from sqlalchemy import select, func
 from uuid import UUID
 import json
 
-from backend.database.config import get_db
-from backend.models.models import Block, BlockVersion
-from backend.models.schemas import (
+from database.config import get_db
+from models.models import Block, BlockVersion
+from models.schemas import (
     TransformRequest,
     TransformResponse,
     LogicAnalysisRequest,
     LogicAnalysisResponse,
     BlockVersionResponse,
 )
-from backend.services.llm_service import llm_service, GroqModel
+from services.llm_service import llm_service, GroqModel
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
@@ -164,7 +164,7 @@ async def transform_block_stream(
         )
     
     # Build system prompt
-    from backend.services.llm_service import LLMService
+    from services.llm_service import LLMService
     service = LLMService()
     system_prompt = service._build_thinker_prompt(
         request.thinker,
@@ -256,7 +256,7 @@ async def analyze_logic(
         analysis = await llm_service.analyze_logic(request.content)
         
         # Convert to schema format
-        from backend.models.schemas import Fallacy, Assumption, ArgumentStructure
+        from models.schemas import Fallacy, Assumption, ArgumentStructure
         
         return LogicAnalysisResponse(
             fallacies=[Fallacy(**f) for f in analysis.get("fallacies", [])],

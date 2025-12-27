@@ -1,5 +1,5 @@
 """Models package"""
-from backend.models.models import (
+from .models import (
     User,
     Document,
     Block,

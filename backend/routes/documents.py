@@ -7,9 +7,9 @@ from sqlalchemy import select, func
 from typing import List
 from uuid import UUID
 
-from backend.database.config import get_db
-from backend.models.models import Document, Block, User
-from backend.models.schemas import (
+from database.config import get_db
+from models.models import Document, Block, User
+from models.schemas import (
     DocumentCreate,
     DocumentUpdate,
     DocumentResponse,
@@ -120,7 +120,7 @@ async def get_document(
     block_responses = []
     for block in blocks:
         # Get active version
-        from backend.models.models import BlockVersion
+        from models.models import BlockVersion
         active_version_result = await db.execute(
             select(BlockVersion)
             .where(BlockVersion.block_id == block.id, BlockVersion.is_active == True)
