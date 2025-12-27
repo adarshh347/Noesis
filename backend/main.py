@@ -1,177 +1,85 @@
 """
-Weltanschauung Backend
-FastAPI server for storing, processing, and visualizing philosophical insights
+Noesis Backend
+FastAPI server for the Creative Philosophy Studio
 """
-
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
-from datetime import datetime
-import json
-import os
-from pathlib import Path
+from contextlib import asynccontextmanager
 
-from services.ai_service import AIService
-from services.insight_extractor import InsightExtractor
+from backend.database.config import engine, Base
+from backend.routes import documents, blocks, ai
 
-app = FastAPI(title="Weltanschauung API", version="1.0.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan events for the application"""
+    # Startup: Create database tables
+    async with engine.begin() as conn:
+        # In production, use Alembic migrations instead
+        await conn.run_sync(Base.metadata.create_all)
+    
+    print("🚀 Noesis backend started")
+    print("📚 Database tables created")
+    print("🧠 LLM service initialized")
+    
+    yield
+    
+    # Shutdown
+    await engine.dispose()
+    print("👋 Noesis backend shutdown")
+
+
+# Create FastAPI app
+app = FastAPI(
+    title="Noesis API",
+    description="The Creative Philosophy Studio - API for rigorous intellectual creation",
+    version="1.0.0",
+    lifespan=lifespan,
+)
 
 # CORS middleware for Next.js frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",  # Alternative port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize services
-ai_service = AIService()
-insight_extractor = InsightExtractor()
-
-# Notes directory
-NOTES_DIR = Path(__file__).parent.parent / "notes"
-NOTES_DIR.mkdir(exist_ok=True)
-
-
-class NoteCreate(BaseModel):
-    content: str
-    title: Optional[str] = None
-    tags: Optional[List[str]] = None
-
-
-class NoteResponse(BaseModel):
-    id: str
-    title: str
-    content: str
-    tags: List[str]
-    created_at: str
-    insights: Optional[dict] = None
+# Include routers
+app.include_router(documents.router, prefix="/api")
+app.include_router(blocks.router, prefix="/api")
+app.include_router(ai.router, prefix="/api")
 
 
 @app.get("/")
 async def root():
+    """Root endpoint"""
     return {
-        "message": "Weltanschauung API",
-        "philosophy": "Converting abstract thoughts into visible insights"
+        "message": "Noesis API",
+        "tagline": "The Creative Philosophy Studio",
+        "philosophy": "Writing as Thinking. Every paragraph is a malleable object with infinite versions.",
+        "docs": "/docs",
     }
 
 
-@app.post("/notes", response_model=NoteResponse)
-async def create_note(note: NoteCreate):
-    """Create a new philosophical note and extract insights"""
-    try:
-        # Generate ID and timestamp
-        note_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-        created_at = datetime.now().isoformat()
-        
-        # Extract title from content if not provided
-        title = note.title or note.content[:100].split('\n')[0]
-        
-        # Extract insights using AI
-        insights = await insight_extractor.extract_insights(note.content)
-        
-        # Create note object
-        note_data = {
-            "id": note_id,
-            "title": title,
-            "content": note.content,
-            "tags": note.tags or [],
-            "created_at": created_at,
-            "insights": insights
-        }
-        
-        # Save to file
-        note_file = NOTES_DIR / f"{note_id}.json"
-        with open(note_file, "w", encoding="utf-8") as f:
-            json.dump(note_data, f, indent=2, ensure_ascii=False)
-        
-        return NoteResponse(**note_data)
-    
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/notes", response_model=List[NoteResponse])
-async def get_notes():
-    """Get all philosophical notes"""
-    try:
-        notes = []
-        for note_file in sorted(NOTES_DIR.glob("*.json"), reverse=True):
-            with open(note_file, "r", encoding="utf-8") as f:
-                note_data = json.load(f)
-                notes.append(NoteResponse(**note_data))
-        return notes
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/notes/{note_id}", response_model=NoteResponse)
-async def get_note(note_id: str):
-    """Get a specific note by ID"""
-    try:
-        note_file = NOTES_DIR / f"{note_id}.json"
-        if not note_file.exists():
-            raise HTTPException(status_code=404, detail="Note not found")
-        
-        with open(note_file, "r", encoding="utf-8") as f:
-            note_data = json.load(f)
-            return NoteResponse(**note_data)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.post("/notes/{note_id}/analyze")
-async def analyze_note(note_id: str):
-    """Re-analyze a note and extract deeper insights"""
-    try:
-        note_file = NOTES_DIR / f"{note_id}.json"
-        if not note_file.exists():
-            raise HTTPException(status_code=404, detail="Note not found")
-        
-        with open(note_file, "r", encoding="utf-8") as f:
-            note_data = json.load(f)
-        
-        # Extract new insights
-        insights = await insight_extractor.extract_insights(note_data["content"])
-        note_data["insights"] = insights
-        
-        # Save updated note
-        with open(note_file, "w", encoding="utf-8") as f:
-            json.dump(note_data, f, indent=2, ensure_ascii=False)
-        
-        return {"insights": insights}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/notes/{note_id}/visualize")
-async def visualize_note(note_id: str):
-    """Generate visualization data for a note"""
-    try:
-        note_file = NOTES_DIR / f"{note_id}.json"
-        if not note_file.exists():
-            raise HTTPException(status_code=404, detail="Note not found")
-        
-        with open(note_file, "r", encoding="utf-8") as f:
-            note_data = json.load(f)
-        
-        # Generate visualization data
-        viz_data = await insight_extractor.generate_visualization(note_data)
-        
-        return viz_data
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.get("/health")
+async def health_check():
+    """Health check endpoint"""
+    return {"status": "healthy", "service": "noesis-backend"}
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(
+        "backend.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+    )
+
 
