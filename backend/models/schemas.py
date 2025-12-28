@@ -108,10 +108,12 @@ class BlockVersionResponse(BaseModel):
 class TransformRequest(BaseModel):
     """Schema for AI transformation request"""
     block_id: UUID
-    thinker: str = Field(..., description="Philosopher to emulate (e.g., 'Nietzsche', 'Kant')")
+    thinker: str = Field(..., description="Philosopher to emulate (e.g., 'nietzsche', 'bataille')")
     intent: TransformIntent
-    style: Optional[str] = Field(None, description="Writing style (e.g., 'aphoristic', 'syllogistic')")
+    style: Optional[str] = Field(None, description="Writing style (e.g., 'aphoristic', 'dramatic')")
     model: Optional[str] = Field(None, description="LLM model to use (optional)")
+    output_length: Optional[str] = Field("medium", description="Output length: brief, short, medium, detailed, extensive")
+    custom_persona: Optional[str] = Field(None, description="Custom persona description for custom_1 through custom_5 thinkers")
 
 
 class TransformResponse(BaseModel):

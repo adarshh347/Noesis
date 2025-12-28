@@ -167,6 +167,8 @@ export interface TransformRequest {
     intent: 'critique' | 'steelman' | 'simplify' | 'mystify' | 'expand' | 'condense';
     style?: string;
     model?: string;
+    output_length?: 'brief' | 'short' | 'medium' | 'detailed' | 'extensive';
+    custom_persona?: string;
 }
 
 export interface TransformResponse {
