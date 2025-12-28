@@ -79,8 +79,8 @@ class BlockResponse(BaseModel):
 
 class BlockVersionCreate(BaseModel):
     """Schema for creating a new block version"""
-    block_id: UUID
-    content: str = Field(..., min_length=1)
+    block_id: Optional[UUID] = None  # Optional - provided in URL path
+    content: str  # HTML content from TipTap editor
     author_type: str = "user"
     transform_intent: Optional[TransformIntent] = None
     transform_params: Optional[Dict[str, Any]] = None
