@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Save, FileText } from 'lucide-react';
 import { BlockEditor } from './BlockEditor';
 import { ThinkerDialog } from './ThinkerDialog';
+import { VersionHistoryPanel } from './VersionHistoryPanel';
 import { useNoesisStore } from '@/lib/stores/noesis-store';
 import { documentApi, blockApi } from '@/lib/api/client';
 
@@ -212,6 +213,9 @@ export function DocumentEditor({ documentId }: DocumentEditorProps) {
 
             {/* Thinker Dialog */}
             <ThinkerDialog />
+
+            {/* Version History Panel */}
+            <VersionHistoryPanel />
         </div>
     );
 }
