@@ -189,7 +189,9 @@
   }
 
   .block-active {
-    @apply border-[var(--accent-amber)] bg-[var(--sepia-light)]/30;
+    border-color: var(--accent-amber);
+    background-color: rgba(245, 241, 232, 0.3);
+    /* sepia-light with 30% opacity */
   }
 
   .block-controls {
@@ -221,7 +223,10 @@
   }
 
   .thinker-item-active {
-    @apply scale-110 border-[var(--accent-amber)] bg-[var(--accent-amber)]/20;
+    @apply scale-110;
+    border-color: var(--accent-amber);
+    background-color: rgba(212, 165, 116, 0.2);
+    /* accent-amber with 20% opacity */
   }
 
   /* Sidebar */
@@ -343,7 +348,9 @@
 
 /* Block selection in editor */
 .ProseMirror .block-selected {
-  @apply bg-[var(--sepia-light)]/50 rounded-md;
+  background-color: rgba(245, 241, 232, 0.5);
+  /* sepia-light with 50% opacity */
+  @apply rounded-md;
 }
 
 /* Phi symbol for thinker mode */
