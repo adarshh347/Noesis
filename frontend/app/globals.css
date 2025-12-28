@@ -186,7 +186,6 @@
     @apply relative mb-4 p-4 rounded-md;
     @apply border border-transparent hover:border-[var(--border-subtle)];
     @apply transition-all duration-200;
-    @apply group;
   }
 
   .block-active {
