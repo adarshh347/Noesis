@@ -12,11 +12,12 @@ load_dotenv()
 
 
 class GroqModel(str, Enum):
-    """Available Groq models"""
-    LLAMA_70B = "llama-3.1-70b-versatile"
-    LLAMA_8B = "llama-3.1-8b-instant"
-    MIXTRAL_8X7B = "mixtral-8x7b-32768"
-    GEMMA_7B = "gemma-7b-it"
+    """Available Groq models - User preferred models"""
+    GPT_OSS_120B = "openai/gpt-oss-120b"  # GPT OSS 120B equivalent
+    QWEN3_32B = "qwen-qwq-32b"  # Qwen 3 32B
+    LLAMA4_MAVERICK = "meta-llama/llama-4-maverick-17b-128e-instruct"  # Llama 4 Maverick
+    KIMI_K2 = "moonshotai/kimi-k2-instruct"  # Kimi K2
+    LLAMA_33_70B = "llama-3.3-70b-versatile"  # Llama 3.3 70B
 
 
 class LLMService:
@@ -28,7 +29,8 @@ class LLMService:
     """
     
     # 🔧 CHANGE THIS TO SWITCH DEFAULT MODEL
-    DEFAULT_MODEL = GroqModel.LLAMA_70B
+    # Using GPT OSS 120B as the preferred default
+    DEFAULT_MODEL = GroqModel.GPT_OSS_120B
     
     def __init__(self, api_key: Optional[str] = None):
         """
