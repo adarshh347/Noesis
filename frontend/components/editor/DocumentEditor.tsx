@@ -52,7 +52,7 @@ export function DocumentEditor({ documentId }: DocumentEditorProps) {
                 document_id: documentId,
                 position_index: currentDocument.blocks?.length || 0,
                 block_type: 'paragraph',
-                initial_content: '',
+                initial_content: '<p></p>',  // Must have content for backend validation
             });
 
             // Reload document to get updated blocks
