@@ -120,11 +120,11 @@ export function BlockEditor({
             </div>
 
             {/* Version Badge */}
-            {isAIGenerated && (
+            {isAIGenerated && block.active_version && (
                 <div className="mb-2 flex items-center gap-2">
                     <span className="version-badge version-badge-ai">
                         <Sparkles size={12} className="mr-1" />
-                        {block.active_version.author_type.replace('system_', '')}
+                        {block.active_version.author_type?.replace('system_', '') || 'AI'}
                     </span>
                     {block.active_version.transform_intent && (
                         <span className="version-badge">

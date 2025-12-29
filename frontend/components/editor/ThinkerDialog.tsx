@@ -84,7 +84,7 @@ export function ThinkerDialog() {
                 thinker: selectedThinker,
                 intent: selectedIntent as any,
                 style: selectedStyle || undefined,
-                output_length: selectedLength,
+                output_length: selectedLength as 'brief' | 'short' | 'medium' | 'detailed' | 'extensive',
                 custom_persona: customThinkers[selectedThinker]?.persona || undefined,
             };
 
@@ -170,8 +170,8 @@ export function ThinkerDialog() {
                                 <button
                                     key={thinker.id}
                                     className={`p-3 rounded-lg text-left transition-all ${isSelected
-                                            ? 'bg-[var(--accent-amber)] text-white'
-                                            : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
+                                        ? 'bg-[var(--accent-amber)] text-white'
+                                        : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
                                         }`}
                                     onClick={() => setThinker(thinker.id)}
                                     title={thinker.description}
@@ -218,8 +218,8 @@ export function ThinkerDialog() {
                                     ) : (
                                         <button
                                             className={`w-full p-3 rounded-lg text-left transition-all flex items-center justify-between ${isSelected
-                                                    ? 'bg-[var(--accent-amber)] text-white'
-                                                    : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
+                                                ? 'bg-[var(--accent-amber)] text-white'
+                                                : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
                                                 }`}
                                             onClick={() => setThinker(thinker.id)}
                                         >
@@ -256,8 +256,8 @@ export function ThinkerDialog() {
                                     key={style}
                                     onClick={() => setStyle(style === selectedStyle ? null : style)}
                                     className={`px-3 py-1 rounded-full text-xs font-sans transition-colors ${selectedStyle === style
-                                            ? 'bg-[var(--accent-amber)] text-white'
-                                            : 'bg-[var(--sepia)] text-[var(--charcoal)] hover:bg-[var(--accent-amber)]/20'
+                                        ? 'bg-[var(--accent-amber)] text-white'
+                                        : 'bg-[var(--sepia)] text-[var(--charcoal)] hover:bg-[var(--accent-amber)]/20'
                                         }`}
                                 >
                                     {style}
@@ -278,8 +278,8 @@ export function ThinkerDialog() {
                                 key={intent.id}
                                 onClick={() => setIntent(intent.id)}
                                 className={`p-3 rounded-lg text-left transition-all ${selectedIntent === intent.id
-                                        ? 'bg-[var(--accent-amber)] text-white'
-                                        : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
+                                    ? 'bg-[var(--accent-amber)] text-white'
+                                    : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
                                     }`}
                             >
                                 <div className="font-sans font-medium text-sm mb-1 capitalize">
@@ -302,8 +302,8 @@ export function ThinkerDialog() {
                                 key={length.id}
                                 onClick={() => setSelectedLength(length.id)}
                                 className={`px-4 py-2 rounded-lg text-sm font-sans transition-all ${selectedLength === length.id
-                                        ? 'bg-[var(--accent-amber)] text-white'
-                                        : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
+                                    ? 'bg-[var(--accent-amber)] text-white'
+                                    : 'bg-[var(--bg-secondary)] hover:bg-[var(--sepia)]'
                                     }`}
                                 title={`${length.description} (~${length.max_words} words)`}
                             >
