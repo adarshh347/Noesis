@@ -113,25 +113,41 @@ class LLMService:
         intent: str,
         style: Optional[str] = None,
         model: Optional[GroqModel] = None,
+        output_length: str = "medium",
+        custom_persona: Optional[str] = None,
     ) -> str:
         """
         Transform a block of text through a philosophical lens
         
         Args:
             content: Original block content
-            thinker: Philosopher to emulate (e.g., "Nietzsche", "Kant")
+            thinker: Philosopher to emulate (e.g., "nietzsche", "bataille")
             intent: Transformation intent (e.g., "critique", "steelman")
-            style: Writing style (e.g., "aphoristic", "syllogistic")
+            style: Writing style (e.g., "aphoristic", "dramatic")
             model: Model to use
+            output_length: Desired output length (brief, short, medium, detailed, extensive)
+            custom_persona: Custom persona for custom_1 through custom_5 thinkers
             
         Returns:
             Transformed text
         """
-        system_prompt = self._build_thinker_prompt(thinker, intent, style)
+        system_prompt = self._build_thinker_prompt(thinker, intent, style, custom_persona)
+        
+        # Output length guidelines
+        length_guidelines = {
+            "brief": "Keep your response to 1-2 sentences (approximately 30-50 words).",
+            "short": "Keep your response to 1 paragraph (approximately 100-150 words).",
+            "medium": "Provide a response of 2-3 paragraphs (approximately 300-400 words).",
+            "detailed": "Provide a comprehensive response (approximately 600-800 words).",
+            "extensive": "Provide a thorough, in-depth exploration (approximately 1200-1500 words).",
+        }
+        length_instruction = length_guidelines.get(output_length, length_guidelines["medium"])
         
         prompt = f"""Transform the following text:
 
 {content}
+
+{length_instruction}
 
 Provide only the transformed version, maintaining the core ideas while applying the requested perspective and style."""
         
@@ -211,18 +227,37 @@ Provide a JSON response with the following structure:
         thinker: str,
         intent: str,
         style: Optional[str] = None,
+        custom_persona: Optional[str] = None,
     ) -> str:
         """Build system prompt for a specific thinker and intent"""
         
-        # Thinker personas
+        # Thinker personas - Core thinkers + hybrid perspectives
         thinker_personas = {
-            "nietzsche": "You are Friedrich Nietzsche. Write with aphoristic brilliance, questioning morality and celebrating life-affirmation. Use bold, provocative language.",
-            "kant": "You are Immanuel Kant. Write with systematic rigor, using categorical imperatives and transcendental reasoning. Be precise and methodical.",
-            "wittgenstein": "You are Ludwig Wittgenstein. Focus on language, logic, and the limits of what can be said. Be terse and enigmatic.",
-            "sankara": "You are Adi Sankara. Write from the perspective of Advaita Vedanta, emphasizing non-duality and the illusory nature of the world.",
-            "hume": "You are David Hume. Apply empiricism and skepticism. Question causation and certainty. Be clear and conversational.",
-            "spinoza": "You are Baruch Spinoza. Write with geometric precision, emphasizing determinism and the unity of substance.",
-            "socrates": "You are Socrates. Use the dialectic method. Ask probing questions that reveal contradictions and lead to deeper understanding.",
+            # Core Philosophers
+            "nietzsche": "You are Friedrich Nietzsche. Write with aphoristic brilliance, questioning morality and celebrating life-affirmation. Use bold, provocative language that challenges convention.",
+            
+            "bataille": "You are Georges Bataille. Write about transgression, excess, and the sacred. Explore taboo and the limits of experience with intensity and philosophical depth.",
+            
+            "hegel_shakespeare": "You channel Hegel's dialectical philosophy through Shakespeare's dramatic prose. Synthesize thesis and antithesis with theatrical flair, using soliloquy-like passages to explore contradictions.",
+            
+            "abhinavagupta_nietzsche": "You blend Abhinavagupta's Kashmir Shaivism with Nietzschean intensity. Explore consciousness, aesthetic rapture (rasa), and divine play through life-affirming philosophy.",
+            
+            "durkheim": "You are Émile Durkheim. Analyze ideas through the lens of social facts, collective consciousness, and social cohesion. Write with sociological rigor.",
+            
+            "mead": "You are George Herbert Mead. Apply symbolic interactionism - explore how meaning emerges through social interaction, the 'I' and 'me', and the generalized other.",
+            
+            "bourdieu": "You are Pierre Bourdieu. Analyze through cultural capital, habitus, and field theory. Expose hidden power structures and social reproduction with critical clarity.",
+            
+            "existentialist": "You are an existentialist thinker combining Sartre, Camus, and Kierkegaard. Explore radical freedom, absurdity, authentic existence, and the weight of choice.",
+            
+            "literary": "You are a literary stylist focused on elegant prose. Enhance the text with vivid imagery, rhythm, and rhetorical flourish while preserving the original meaning. No philosophical overlay - pure stylistic enhancement.",
+            
+            # Custom slots (can be overridden via custom_persona parameter)
+            "custom_1": "You are a thoughtful philosopher. Transform the text with careful reasoning and insight.",
+            "custom_2": "You are a thoughtful philosopher. Transform the text with careful reasoning and insight.",
+            "custom_3": "You are a thoughtful philosopher. Transform the text with careful reasoning and insight.",
+            "custom_4": "You are a thoughtful philosopher. Transform the text with careful reasoning and insight.",
+            "custom_5": "You are a thoughtful philosopher. Transform the text with careful reasoning and insight.",
         }
         
         # Intent modifiers
@@ -235,7 +270,12 @@ Provide a JSON response with the following structure:
             "condense": "Compress this to its core insight. Remove redundancy while preserving meaning.",
         }
         
-        persona = thinker_personas.get(thinker.lower(), f"You are a philosopher in the tradition of {thinker}.")
+        # Use custom_persona for custom thinker slots if provided
+        if custom_persona and thinker.lower().startswith("custom_"):
+            persona = custom_persona
+        else:
+            persona = thinker_personas.get(thinker.lower(), f"You are a philosopher in the tradition of {thinker}.")
+        
         modifier = intent_modifiers.get(intent.lower(), f"Transform this text with the intent to {intent}.")
         
         style_instruction = ""

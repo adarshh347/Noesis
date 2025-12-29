@@ -83,3 +83,8 @@ See `SETUP.md` for detailed installation and development instructions.
 - [ ] Phase 3: Intelligence Layer (Logic linting, semantic search)
 - [ ] Phase 4: Polish & Aesthetics
 
+Blocks are containers, not content - they hold a position and type
+Versions hold the actual text - content never overwrites, only stacks
+Every AI transformation creates a new version - preserving intellectual history
+is_active controls visibility - easy to time-travel between versions
+Cascade deletes ensure referential integrity - delete a document, all blocks and versions go with it

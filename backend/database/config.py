@@ -1,5 +1,6 @@
 """
 Database configuration and session management
+Using Supabase Session Mode Pooler (supports prepared statements)
 """
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import declarative_base
@@ -10,16 +11,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Database URL from environment variable
+# Using Supabase Session Mode Pooler (port 5432) which supports prepared statements
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+asyncpg://postgres:postgres@localhost:5432/noesis"
 )
 
 # Create async engine
+# Session Mode pooler supports prepared statements, so no special config needed
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,  # Set to False in production
-    poolclass=NullPool,  # Use NullPool for async
+    poolclass=NullPool,  # Let Supabase handle connection pooling
 )
 
 # Create async session maker

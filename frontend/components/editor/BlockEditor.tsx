@@ -96,7 +96,10 @@ export function BlockEditor({
                     {/* Version History */}
                     {versionCount > 1 && (
                         <button
-                            onClick={() => useNoesisStore.getState().toggleVersionHistory()}
+                            onClick={() => {
+                                useNoesisStore.getState().setSelectedBlock(block.id);
+                                useNoesisStore.getState().toggleVersionHistory();
+                            }}
                             className="text-[var(--text-muted)] hover:text-[var(--accent-amber)] transition-colors"
                             title={`${versionCount} versions`}
                             aria-label="View version history"
