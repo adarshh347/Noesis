@@ -96,9 +96,9 @@ export default function ConceptMapComponent({ conceptMap }: ConceptMapProps) {
             graphRef.current?.zoomToFit(400)
           } catch (e) {
             console.error('Error zooming to fit:', e)
+            setError(true)
           }
         }}
-        onError={() => setError(true)}
       />
     </div>
   )

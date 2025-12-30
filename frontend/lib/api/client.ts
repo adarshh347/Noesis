@@ -241,10 +241,17 @@ export const aiApi = {
             name: string;
             description: string;
             style_suggestions: string[];
+            is_custom?: boolean;
         }>;
         intents: Array<{
             id: string;
             description: string;
+        }>;
+        output_lengths?: Array<{
+            id: string;
+            label: string;
+            description: string;
+            max_words: number;
         }>;
     }> => {
         const response = await api.get('/ai/thinkers');
